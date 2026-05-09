@@ -1,0 +1,45 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Flask instance/config
+instance/
+
+# Environment variables
+.env
+
+# IDE
+.idea/
+.vscode/
+
+# Logs
+logs/
+*.log
+
+# Uploaded images
+images/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Pytest/cache
+.pytest_cache/
+.mypy_cache/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# SQLite databases
+*.db
+*.sqlite3
+
+
+#CLAUDE
+CLAUDE.md
