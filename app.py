@@ -1,6 +1,5 @@
 from flask import Flask, render_template, jsonify, request, send_from_directory, url_for
 from PIL import Image, UnidentifiedImageError
-from werkzeug.exceptions import RequestEntityTooLarge
 import logging
 import uuid
 import os
@@ -72,7 +71,7 @@ def upload_image():
         logging.warning('Ошибка: файл не найден в запросе')
         return jsonify({
             'error': 'Файл не найден'
-        })
+        }), 400
 
     original_filename = uploaded_file.filename or 'unknown'
 
@@ -96,7 +95,7 @@ def upload_image():
         logging.warning(f'Ошибка: файл {original_filename} не поддерживается или пустой')
         return jsonify({
             'error': 'Поддерживаются только форматы jpg, png, gif'
-        })
+        }), 400
 
     unique_filename = f'{uuid.uuid4().hex}.{image_extension}'
 
