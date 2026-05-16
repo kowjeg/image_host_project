@@ -116,6 +116,16 @@ def upload_image():
     }), 201
 
 
+@app.delete('/images/<path:filename>')
+def delete_image(filename):
+    target = (IMAGES_DIR / filename).resolve()
+    if not target.is_relative_to(IMAGES_DIR.resolve()) or not target.is_file():
+        return jsonify({'error': 'Файл не найден'}), 404
+    target.unlink()
+    logging.info(f'Файл {filename} удалён')
+    return jsonify({'message': 'Файл удалён'}), 200
+
+
 @app.get('/images/<path:filename>')
 def get_image(filename):
     return send_from_directory(IMAGES_DIR, filename)
@@ -147,4 +157,4 @@ def images_page():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=False)

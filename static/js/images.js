@@ -72,12 +72,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const addDeleteListeners = () => {
         document.querySelectorAll('.delete-btn').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const indexToDelete = parseInt(event.currentTarget.dataset.index);
-                let storedFiles = JSON.parse(localStorage.getItem('uploadedImages')) || [];
-                storedFiles.splice(indexToDelete, 1);
-                localStorage.setItem('uploadedImages', JSON.stringify(storedFiles));
-                displayFiles();
+            button.addEventListener('click', async (event) => {
+                const filename = event.currentTarget.dataset.filename;
+                const response = await fetch('/images/' + filename, { method: 'DELETE' });
+                if (response.ok) {
+                    window.location.reload();
+                } else {
+                    const result = await response.json();
+                    alert('Ошибка: ' + result.error);
+                }
             });
         });
     };
@@ -89,4 +92,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     displayFiles();
+    addDeleteListeners();
 });

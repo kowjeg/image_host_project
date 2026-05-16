@@ -23,7 +23,31 @@
         <button class="upload__tab" id="upload-tab-btn">Upload</button>
         <button class="upload__tab upload__tab--active" id="images-tab-btn">Images</button>
     </nav>
-    <section id="file-list-wrapper">
+    {% if images %}
+    <div class="file-list-container">
+        <div class="file-list-header">
+            <div class="file-col file-col-name">Name</div>
+            <div class="file-col file-col-url">Url</div>
+            <div class="file-col file-col-delete">Delete</div>
+        </div>
+        <div id="file-list">
+            {% for image in images %}пере
+            <div class="file-list-item">
+                <div class="file-col file-col-name">
+                    <span class="file-icon"><img src="{{ url_for('static', filename='img/icon/Group.png') }}" alt="file icon"></span>
+                    <span class="file-name">{{ image.name }}</span>
+                </div>
+                <div class="file-col file-col-url">{{ image.full_url }}</div>
+                <div class="file-col file-col-delete">
+                    <button class="delete-btn" data-filename="{{ image.name }}"><img src="{{ url_for('static', filename='img/icon/delete.png') }}" alt="delete icon"></button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <section id="file-list-wrapper" {% if images %}style="display:none"{% endif %}>
     </section>
 </body>
 <script src="{{ url_for('static', filename='js/images.js') }}"></script>
