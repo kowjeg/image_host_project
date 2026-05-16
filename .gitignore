@@ -21,7 +21,8 @@ logs/
 *.log
 
 # Uploaded images
-images/
+images/*
+!images/.gitkeep
 
 # OS files
 .DS_Store

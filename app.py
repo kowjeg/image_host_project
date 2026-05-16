@@ -50,6 +50,7 @@ def detect_image_extension(file_data: bytes):
             return ALLOWED_IMAGE_FORMATS.get(image.format)
 
     except (UnidentifiedImageError, OSError):
+
         return None
 
 
