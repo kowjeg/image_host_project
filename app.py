@@ -1,10 +1,13 @@
-from flask import Flask, render_template, jsonify, request, send_from_directory, url_for
+from flask import Flask, render_template, jsonify, request, send_from_directory, url_for, redirect
 from PIL import Image, UnidentifiedImageError
 import logging
 import uuid
 import os
 from io import BytesIO
 from pathlib import Path
+
+from database.repository import save_metadata, get_images, get_count_images, delete_image_by_id
+from database.models import create_images
 
 app = Flask(__name__)
 
@@ -103,6 +106,18 @@ def upload_image():
 
     target_save_path.write_bytes(file_data)
 
+
+    try:
+        save_metadata(filename=unique_filename,
+                      original_name=original_filename,
+                      size=len(file_data),
+                      file_type=image_extension
+                      )
+    except Exception as e:
+        target_save_path.unlink(missing_ok=True)
+        logging.error('Файл удален, т.к. не удалось сохранить метаданные')
+        return  jsonify({'error': 'Ошибка при сохранении данных'}), 500
+
     relative_url = url_for('get_image', filename=unique_filename)
     full_url = request.host_url.rstrip('/') + relative_url
 
@@ -113,6 +128,44 @@ def upload_image():
         'url': relative_url,
         'full_url': full_url
     }), 201
+
+
+
+@app.get('/images-list')
+def images_list():
+    page = request.args.get('page', 1, type=int)
+    per_page = 10
+    offset = (page - 1) * per_page
+    total = get_count_images()
+    rows = get_images(per_page=per_page, offset=offset)
+    images = []
+    for row in rows:
+        images.append(
+            {
+
+            'id': row[0],
+            'filename': row[1],
+            'original_name': row[2],
+            'size': row[3],
+            'upload_time' : row[4],
+            'file_type': row[5],
+            'url': url_for('get_image', filename=row[1])
+            }
+        )
+    total_pages = (total + per_page - 1) // per_page
+    return render_template('images_list.html',
+                           images=images,
+                           page=page,
+                           total_pages=total_pages)
+
+
+@app.post('/delete/<int:image_id>')
+def delete_image_record(image_id):
+    filename = delete_image_by_id(image_id)
+    if filename:
+        (IMAGES_DIR / filename).unlink(missing_ok=True)
+        logging.info(f'Файл {filename} удалён с диска')
+    return redirect(url_for('images_list'))
 
 
 @app.delete('/images/<path:filename>')
@@ -131,7 +184,7 @@ def get_image(filename):
 
 
 
-@app.get('/images')
+@app.get('/images', strict_slashes=False)
 def images_page():
 
     images = []
@@ -156,4 +209,5 @@ def images_page():
 
 
 if __name__ == '__main__':
+    create_images()
     app.run(host='0.0.0.0', debug=False)

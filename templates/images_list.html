@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartUploader</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <section class="upload__intro">
+        <h2 class="upload__title">Загруженные изображения</h2>
+    </section>
+
+    {% if images %}
+    <div class="file-list-container">
+        <div class="file-list-header">
+            <div class="file-col">Имя файла</div>
+            <div class="file-col">Оригинальное имя</div>
+            <div class="file-col">Размер (КБ)</div>
+            <div class="file-col">Дата загрузки</div>
+            <div class="file-col">Тип</div>
+            <div class="file-col">Удалить</div>
+        </div>
+        <div id="file-list">
+            {% for image in images %}
+            <div class="file-list-item">
+                <div class="file-col">
+                    <a href="{{ image.url }}" target="_blank" class="file-name">{{ image.filename }}</a>
+                </div>
+                <div class="file-col">{{ image.original_name }}</div>
+                <div class="file-col">{{ (image.size / 1024) | round | int }}</div>
+                <div class="file-col">{{ image.upload_time.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                <div class="file-col">{{ image.file_type }}</div>
+                <div class="file-col">
+                    <form action="{{ url_for('delete_image_record', image_id=image.id) }}" method="post">
+                        <button type="submit" class="delete-btn">
+                            <img class="delete-img" src="{{ url_for('static', filename='img/icon/delete.png') }}" alt="delete icon">
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="upload__tabs">
+            {% if page > 1 %}
+            <a class="upload__tab" href="{{ url_for('images_list', page=page-1) }}">← Предыдущая</a>
+            {% endif %}
+            <span class="upload__tab upload__tab--active">{{ page }} / {{ total_pages }}</span>
+            {% if page < total_pages %}
+            <a class="upload__tab" href="{{ url_for('images_list', page=page+1) }}">Следующая →</a>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <p class="upload__promt" style="text-align: center; margin-top: 50px;">Нет загруженных изображений.</p>
+    {% endif %}
+</body>
+
+</html>

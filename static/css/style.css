@@ -249,6 +249,12 @@ body {
     border-bottom: none;
 }
 
+/* Make list cell text readable (body color is white) */
+.file-list-item {
+    color: #333;
+    font-size: 14px;
+}
+
 /* List header */
 .file-list-header {
     color: #8a96b1;
