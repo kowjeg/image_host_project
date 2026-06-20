@@ -10,6 +10,8 @@ services:
     ports:
       - "5000:5000"
 
+    env_file:
+      - .env
     environment:
       IMAGES_DIR: /images
       LOGS_DIR: /logs
@@ -23,15 +25,15 @@ services:
     container_name: image_server_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: images_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - db_data:/var/lib/postgresql/data
     ports:
       - "5435:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d images_db"]
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
       timeout: 5s
       retries: 10

@@ -1,0 +1,1 @@
+docker exec -i image_server_db psql -U postgres images_db < "$1"

@@ -1,12 +1,5 @@
-import psycopg
 import os
-
+import psycopg
 
 def get_connection():
-    return psycopg.connect(
-        dbname='images_db',
-        user='postgres',
-        password='postgres',
-        host='db',
-        port='5432'
-    )
+    return psycopg.connect(os.getenv("DATABASE_URL"))

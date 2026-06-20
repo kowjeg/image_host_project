@@ -20,6 +20,10 @@ instance/
 logs/
 *.log
 
+# Backups
+
+backups/*.sql
+
 # Uploaded images
 images/*
 !images/.gitkeep
